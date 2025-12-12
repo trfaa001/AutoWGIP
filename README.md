@@ -8,6 +8,10 @@ cd AutoWGIP
 chmod +x install.sh main.sh
 ./install.sh
 </pre>
+or
+<pre>
+git clone https://github.com/trfaa001/AutoWGIP.git && cd AutoWGIP && chmod +x install.sh main.sh && ./install.sh
+</pre>
 
 # Function and limitations
 
