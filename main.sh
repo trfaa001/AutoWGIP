@@ -1,3 +1,4 @@
+#!/bin/bash
 set -euo pipefail
 LOGFILE="/var/log/wgAUTO.log"
 
