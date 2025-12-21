@@ -1,5 +1,8 @@
-* Config file
-* Check the ip with multiple sources
+* costum port (default: 8473)
+* costum Wireguard config file name and location (default: name=wg0 location=/etc/wireguard)
+* Costum log file location
 
-* Uninstall script
-* Update to more standard install practices
+* IPV6/4 verification on/off (default: on)
+* Logging on/off (default: on)
+* Dry run mode(disable changing files)
+* Force mode (no verification or checks)
