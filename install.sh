@@ -3,6 +3,7 @@ set -euo pipefail
 
 LOGFILE="/var/log/wgAUTO.log"
 CONFIG_DIR="/etc/wgAUTO"
+CONFIG_FILE="$CONFIG_DIR/AUTOwgIP.conf"
 DATA_FILE="$CONFIG_DIR/data.conf"
 INSTALL_PATH="/usr/local/bin/autoWG"
 FUNCTIONS_PATH="/usr/local/bin/functions.sh"
@@ -14,15 +15,23 @@ echo "Creating config directory at $CONFIG_DIR..."
 mkdir -p "$CONFIG_DIR"
 chmod 700 "$CONFIG_DIR"
 
-if [ ! -f "$DATA_FILE" ]; then
-    echo "Initializing data.conf..."
-    touch "$DATA_FILE"
-    chmod 600 "$DATA_FILE"
-fi
+# Deploy data file
+
+echo "Initializing data.conf..."
+touch "$DATA_FILE"
+chmod 600 "$DATA_FILE"
+
+# Deploy log file
 
 echo "Creating log file at $LOGFILE..."
 touch "$LOGFILE"
 chmod 640 "$LOGFILE"
+
+# Deploy config file
+echo "Creating config file at $CONFIG_DIR..."
+mkdir -p "$CONFIG_DIR"
+cp "src/default.conf" "$CONFIG_FILE"
+chmod 600 "$CONFIG_FILE"
 
 # Deploy main script
 if [ -f "src/main.sh" ]; then

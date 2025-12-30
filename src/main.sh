@@ -1,21 +1,38 @@
 #!/bin/bash
 set -euo pipefail
-LOGFILE="/var/log/wgAUTO.log"
 
 source "functions.sh"
 
-#You may need to change these
-FILE_PATH="/etc/wireguard/wg0.conf" #File path to the wireguard config
-PORT="8473" #Wireguard port
+LOG_FILE="/var/log/wgAUTO.log"
+CONFIG_FILE="/etc/wgAUTO/AUTOwgIP.conf"
+
+#Check if config file exists before sourcing
+if [ -f "$CONFIG_FILE"]; then
+    . "$CONFIG_FILE"
+else
+    log "Config file not found at $CONFIG_FILE"
+    exit 1
+
+
+FILE_PATH="${WG_CONFIG_DIR}/${WG_INTERFACE_NAME}.conf" #File path to the wireguard config
 
 CURRENT_IP=$(curl -s ifconfig.me) #Can be replaced with other providers/services
 SAVED_IP=$(cat /etc/wgAUTO/data.conf)
 
 echo "Host current public IP: $CURRENT_IP Host saved IP: $SAVED_IP" 
+if [ "$FORCE_MODE" != "on" ]; then
+    log "Force mode on"
+    continue
+else
+    if ["$IP_VERIFICATION" = "on"]; then
+        validate_ip "$CURRENT_IP"
+    else
+        log "IP validation off"
+    fi
 
-validate_port "$PORT"
+    validate_port "$PORT"
+fi
 
-validate_ip "$CURRENT_IP"
 
 #Only changes the ip if the ip has changed
 if [ "$CURRENT_IP" != "$SAVED_IP" ]; then
@@ -26,6 +43,12 @@ if [ "$CURRENT_IP" != "$SAVED_IP" ]; then
 
             if pct exec "$CTID" -- test -f "$FILE_PATH"; then
                 log "File $FILE_PATH exists in container $CTID"
+
+                if [ "$DRY_RUN" = "on" ]; then
+                    log "[DRY RUN] Would run in CT $CTID with the file path $FILE_PATH"
+                    log "[DRY RUN] Would update endpoint to $CURRENT_IP:$PORT"
+                    continue
+                fi
 
                 run_in_ct "$CTID" cp "$FILE_PATH" "$FILE_PATH.bak"
 

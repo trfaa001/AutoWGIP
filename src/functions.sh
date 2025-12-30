@@ -1,5 +1,9 @@
 log() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') [$0] $*" >>"$LOGFILE"
+    if [ "$LOGGING" = "off" ]; then
+        return
+    fi
+    
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [$0] $*" >>"$LOG_FILE"
 }
 
 validate_port() {
@@ -51,4 +55,10 @@ run_in_ct() {
         log "Error: command '$*' failed in container $CTID"
         exit 4
     fi
+}
+
+check_file_existance() {
+    local File="$1"
+
+    if [ -f "$File" ]; then
 }
