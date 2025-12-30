@@ -7,11 +7,12 @@ LOG_FILE="/var/log/wgAUTO.log"
 CONFIG_FILE="/etc/wgAUTO/AUTOwgIP.conf"
 
 #Check if config file exists before sourcing
-if [ -f "$CONFIG_FILE"]; then
+if [ -f "$CONFIG_FILE" ]; then
     . "$CONFIG_FILE"
 else
     log "Config file not found at $CONFIG_FILE"
     exit 1
+fi
 
 
 FILE_PATH="${WG_CONFIG_DIR}/${WG_INTERFACE_NAME}.conf" #File path to the wireguard config
@@ -20,11 +21,11 @@ CURRENT_IP=$(curl -s ifconfig.me) #Can be replaced with other providers/services
 SAVED_IP=$(cat /etc/wgAUTO/data.conf)
 
 echo "Host current public IP: $CURRENT_IP Host saved IP: $SAVED_IP" 
-if [ "$FORCE_MODE" != "on" ]; then
+
+if [ "$FORCE_MODE" = "on" ]; then
     log "Force mode on"
-    continue
 else
-    if ["$IP_VERIFICATION" = "on"]; then
+    if [ "$IP_VERIFICATION" = "on" ]; then
         validate_ip "$CURRENT_IP"
     else
         log "IP validation off"
@@ -54,8 +55,8 @@ if [ "$CURRENT_IP" != "$SAVED_IP" ]; then
 
                 log "[$CTID] Updating WireGuard endpoint to $CURRENT_IP:$PORT"
                 run_in_ct "$CTID" sed -i "10s|.*|Endpoint = $CURRENT_IP:$PORT|" "$FILE_PATH"
-                run_in_ct "$CTID" wg-quick down wg0
-                run_in_ct "$CTID" wg-quick up wg0
+                run_in_ct "$CTID" wg-quick down ${WG_INTERFACE_NAME}.conf
+                run_in_ct "$CTID" wg-quick up ${WG_INTERFACE_NAME}.conf
             else
                 log "[$CTID] does not have the file $FILE_PATH"
             fi
