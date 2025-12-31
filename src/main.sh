@@ -14,13 +14,17 @@ else
     exit 1
 fi
 
-
 FILE_PATH="${WG_CONFIG_DIR}/${WG_INTERFACE_NAME}.conf" #File path to the wireguard config
 
-CURRENT_IP=$(curl -s ifconfig.me) #Can be replaced with other providers/services
-SAVED_IP=$(cat /etc/wgAUTO/data.conf)
+SAVED_DATA=$(cat /etc/wgAUTO/data.conf 2>/dev/null || true)
+SAVED_IP="${SAVED_DATA%%:*}"
+SAVED_PORT="${SAVED_DATA##*:}"
 
-echo "Host current public IP: $CURRENT_IP Host saved IP: $SAVED_IP" 
+CURRENT_IP=$(curl -s ifconfig.me) #Can be replaced with other providers/services
+CURRENT_PORT=$PORT
+
+echo "Host current public IP: $CURRENT_IP Host saved IP: $SAVED_IP"
+echo "Host current port: $CURRENT_PORT Host saved port: $SAVED_PORT" 
 
 if [ "$FORCE_MODE" = "on" ]; then
     log "Force mode on"
@@ -35,9 +39,9 @@ else
 fi
 
 
-#Only changes the ip if the ip has changed
-if [ "$CURRENT_IP" != "$SAVED_IP" ]; then
-        printf "$CURRENT_IP" > /etc/wgAUTO/data.conf
+# Update if the ip or port change
+if [ "$CURRENT_IP" != "$SAVED_IP" ] || [ "$CURRENT_PORT" != "$SAVED_PORT" ]; then
+        printf "%s:%s" "$CURRENT_IP" "$CURRENT_PORT" > /etc/wgAUTO/data.conf
 
         for CTID in $(pct list | awk 'NR>1 {print $1}'); do
                 log "container" "$CTID" "found!"
