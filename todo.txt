@@ -3,3 +3,4 @@
 
 * Uninstall script
 * Update to more standard install practices
+* Change the frequency of the checks

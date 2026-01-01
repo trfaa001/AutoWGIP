@@ -38,6 +38,7 @@ if [ -f "src/main.sh" ]; then
     cp "src/main.sh" "$INSTALL_PATH"
     cp "src/functions.sh" "$FUNCTIONS_PATH"
     chmod 755 "$INSTALL_PATH"
+    chmod 755 "$FUNCTIONS_PATH"
     echo "Installed autoWG to $INSTALL_PATH"
 else
     echo "Error: src/main.sh not found"
@@ -46,10 +47,10 @@ fi
 
 # Add cron job
 if ! crontab -l 2>/dev/null | grep -q "$INSTALL_PATH"; then
-    echo "Adding cron job..."
-    (crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
+    ( crontab -l 2>/dev/null || true; echo "$CRON_JOB" ) | crontab -
 else
     echo "Cron job already exists."
 fi
+
 
 echo "Installation complete!"

@@ -13,6 +13,33 @@ or
 git clone https://github.com/trfaa001/AUTOwgIP && cd AUTOwgIP && chmod +x install.sh && ./install.sh
 </pre>
 
+# Uninstall:
+<pre>
+chmod +x uninstall.sh && ./uninstall.sh # While in the repository folder
+</pre>
+
+# Config:
+location: /etc/wgAUTO/AUTOwgIP.conf
+#### Example:
+<pre>
+# Network settings
+PORT=8473
+
+# WireGuard configuration
+WG_INTERFACE_NAME="wg0"
+
+# Logging settings
+LOG_FILE="/var/log/wgAUTO.log"
+LOGGING="on"
+
+# Verification settings
+IP_VERIFICATION="on"
+
+# Execution modes
+DRY_RUN="off"
+FORCE_MODE="off"
+</pre>
+
 # Function and limitations
 
 Script function:
