@@ -1,4 +1,3 @@
-* Config file
 * Check the ip with multiple sources
 * Peer selection
 

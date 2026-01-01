@@ -1,5 +1,9 @@
 log() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') [$0] $*" >>"$LOGFILE"
+    if [ "$LOGGING" = "off" ]; then
+        return
+    fi
+    
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [$0] $*" >>"$LOG_FILE"
 }
 
 validate_port() {
@@ -41,7 +45,6 @@ validate_ip() {
 
     log "Invalid IP"
     exit 2
-    return 1
 }
 
 run_in_ct() {
@@ -50,5 +53,15 @@ run_in_ct() {
     if ! pct exec "$CTID" -- "$@"; then
         log "Error: command '$*' failed in container $CTID"
         exit 4
+    fi
+}
+
+check_file_existance() {
+    local File="$1"
+
+    if [ -f "$File" ]; then
+        return 0
+    else
+        return 1
     fi
 }

@@ -21,6 +21,4 @@ Script function:
 3. Sync the Wireguard config
 
 Limitations of the script:
-* Requires the wiregurd config to be located in the same location on all containers.
-* Requires same config name.
 * Wireguard need to be preconfigured in the container.
