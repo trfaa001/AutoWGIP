@@ -4,3 +4,5 @@ cat /var/log/wgAUTO.log
 nano /usr/local/bin/functions.sh
 
 nano /etc/wgAUTO/AUTOwgIP.conf
+
+git clone -b multiple-sources https://github.com/trfaa001/AUTOwgIP && cd AUTOwgIP && chmod +x install.sh && ./install.sh
