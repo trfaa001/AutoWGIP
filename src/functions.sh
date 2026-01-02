@@ -21,11 +21,11 @@ validate_ip() {
 
     if [[ -z "$IP" ]]; then
         log "Could not fetch current local IP!"
-        exit 3
+        return 1
     fi
 
     # Try IPv4 with ipcalc
-    if ipcalc -c "$IP" >/dev/null 2>&1; then
+    if ipcalc -c "$IP/32" >/dev/null 2>&1; then
         log "Valid ipcalc"
         return 0
     fi
@@ -44,7 +44,7 @@ validate_ip() {
     fi
 
     log "Invalid IP"
-    exit 2
+    return 1
 }
 
 run_in_ct() {
@@ -64,4 +64,40 @@ check_file_existance() {
     else
         return 1
     fi
+}
+
+get_current_ip() {
+    local ip=""
+
+    log "IP_SOURCES count: ${#IP_SOURCES[@]}"
+
+    for src in "${IP_SOURCES[@]}"; do
+
+        log "src: $src"
+
+        ip=$(curl -4 -s --max-time 3 "$src" 2>&1)
+        ip="${ip//$'\n'/}"
+        
+        log "curl output from $src: '$ip'"
+
+        # Skip empty responses
+        [ -z "$ip" ] && continue
+
+        # Validate if IP_VERIFICATION is on
+        if [ "$IP_VERIFICATION" = "on" ]; then
+            if validate_ip "$ip"; then
+                echo "$ip"
+                return 0
+            else
+                log "Invalid IP returned from $src: $ip"
+            fi
+        else
+            echo "$ip"
+            return 0
+        fi
+    done
+
+    # If all sources fail
+    log "All IP sources failed"
+    return 1
 }

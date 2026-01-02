@@ -14,7 +14,7 @@ else
     exit 1
 fi
 
-FILE_PATH="/etc/wireguard/${WG_INTERFACE_NAME}.conf" #File path to the wireguard config
+FILE_PATH="${WG_CONFIG_DIR}/${WG_INTERFACE_NAME}.conf" #File path to the wireguard config
 
 SAVED_DATA=$(cat /etc/wgAUTO/data.conf 2>/dev/null || true)
 SAVED_IP="${SAVED_DATA%%:*}"
@@ -50,8 +50,8 @@ if [ "$CURRENT_IP" != "$SAVED_IP" ] || [ "$CURRENT_PORT" != "$SAVED_PORT" ]; the
                 log "File $FILE_PATH exists in container $CTID"
 
                 if [ "$DRY_RUN" = "on" ]; then
-                    echo "[DRY RUN] Would run in CT $CTID with the file path $FILE_PATH"
-                    echo "[DRY RUN] Would update endpoint to $CURRENT_IP:$PORT"
+                    log "[DRY RUN] Would run in CT $CTID with the file path $FILE_PATH"
+                    log "[DRY RUN] Would update endpoint to $CURRENT_IP:$PORT"
                     continue
                 fi
 

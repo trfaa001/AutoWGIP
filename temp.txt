@@ -1,0 +1,6 @@
+nano /usr/local/bin/autoWG
+cat /var/log/wgAUTO.log
+
+nano /usr/local/bin/functions.sh
+
+nano /etc/wgAUTO/AUTOwgIP.conf
